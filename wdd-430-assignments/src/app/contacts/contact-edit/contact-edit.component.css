@@ -1,4 +1,4 @@
-.required.ng-invalid.ng-touched {
+.required.ng-invalid {
   border: 1px solid red;
 }
 
@@ -7,7 +7,7 @@
 }
 
 .pad-left-right {
-  padding-left: .1rem;
+  padding-left: 0.1rem;
 }
 
 .deleteButton {

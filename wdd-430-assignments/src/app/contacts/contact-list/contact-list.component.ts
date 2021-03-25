@@ -1,7 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Contact } from '../contact.model';
 import { ContactService } from '../contact.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'cms-contact-list',
@@ -9,13 +9,12 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./contact-list.component.css'],
 })
 export class ContactListComponent implements OnInit {
-  contacts: Contact[] = [];
+  contacts: Contact[];
   private subscription: Subscription;
   term: string;
-
   constructor(private contactService: ContactService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.contactService.getContacts();
     this.contactService.contactChangedEvent.subscribe((contacts: Contact[]) => {
       this.contacts = contacts;
@@ -30,6 +29,10 @@ export class ContactListComponent implements OnInit {
 
   search(value: string) {
     this.term = value;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   onKeyPress(value: string) {

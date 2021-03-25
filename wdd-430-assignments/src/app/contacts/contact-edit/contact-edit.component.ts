@@ -3,7 +3,6 @@ import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Contact } from '../contact.model';
 import { ContactService } from '../contact.service';
-import { DndModule } from 'ng2-dnd';
 
 @Component({
   selector: 'cms-contact-edit',
@@ -58,12 +57,11 @@ export class ContactEditComponent implements OnInit {
       null,
       null
     );
-    if (this.editMode === true) {
+    if (this.editMode) {
       this.contactService.updateContact(this.originalContact, newContact);
     } else {
       this.contactService.addContact(newContact);
     }
-
     this.router.navigate(['/contacts']);
   }
 

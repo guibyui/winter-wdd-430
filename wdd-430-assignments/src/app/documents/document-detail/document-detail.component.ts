@@ -1,8 +1,8 @@
-import { Input, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { WindRefService } from 'src/app/wind-ref.service';
 import { Document } from '../document.model';
 import { DocumentService } from '../document.service';
-import { WindRefService } from 'src/app/wind-ref.service';
 
 @Component({
   selector: 'cms-document-detail',

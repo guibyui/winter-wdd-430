@@ -2,6 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Document } from './document.model';
 import { Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,20 +15,22 @@ export class DocumentService {
   documentListChangedEvent: Subject<Document[]> = new Subject<Document[]>();
   maxDocumentID: number;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+
+  }
 
   sortAndSend() {
-    this.maxDocumentID = this.getMaxId();
-    this.documents.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-      if (a.name > b.name) {
-        return 1;
-      }
-      return 0;
-    });
-    this.documentListChangedEvent.next(this.documents.slice());
+   this.maxDocumentID = this.getMaxId();
+   this.documents.sort((a, b) => {
+     if (a.name < b.name) {
+       return -1;
+     }
+     if (a.name > b.name) {
+       return 1;
+     }
+     return 0;
+   })
+   this.documentListChangedEvent.next(this.documents.slice());
   }
 
   getDocuments() {
@@ -41,8 +44,7 @@ export class DocumentService {
       //error method
       (error: any) => {
         console.log(error);
-      }
-    );
+      });
   }
 
   getDocument(id: string) {
@@ -65,77 +67,77 @@ export class DocumentService {
     return maxId;
   }
 
-  addDocument(document: Document) {
-    if (!document) {
-      return;
-    }
 
-    // make sure id of the new Document is empty
-    document.id = '';
+ addDocument(document: Document) {
+   if (!document) {
+     return;
+   }
 
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+   // make sure id of the new Document is empty
+   document.id = '';
 
-    // add to database
-    this.http
-      .post<{ message: string; document: Document }>(
-        'http://localhost:8080/documents',
-        document,
-        { headers: headers }
-      )
-      .subscribe((responseData) => {
-        // add new document to documents
-        this.documents.push(responseData.document);
-        this.sortAndSend();
-      });
-  }
+   const headers = new HttpHeaders({'Content-Type': 'application/json'});
 
-  updateDocument(originalDocument: Document, newDocument: Document) {
-    if (!originalDocument || !newDocument) {
-      return;
-    }
+   // add to database
+   this.http.post<{ message: string, document: Document }>('http://localhost:8080/documents',
+     document,
+     { headers: headers })
+     .subscribe(
+       (responseData) => {
+         // add new document to documents
+         this.documents.push(responseData.document);
+         this.sortAndSend();
+       }
+     );
+ }
 
-    const pos = this.documents.findIndex((d) => d.id === originalDocument.id);
+ updateDocument(originalDocument: Document, newDocument: Document) {
+   if (!originalDocument || !newDocument) {
+     return;
+   }
 
-    if (pos < 0) {
-      return;
-    }
+   const pos = this.documents.findIndex(d => d.id === originalDocument.id);
 
-    // set the id of the new Document to the id of the old Document
-    newDocument.id = originalDocument.id;
-    newDocument._id = originalDocument._id;
+   if (pos < 0) {
+     return;
+   }
 
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+   // set the id of the new Document to the id of the old Document
+   newDocument.id = originalDocument.id;
+   newDocument._id = originalDocument._id;
 
-    // update database
-    this.http
-      .put(
-        'http://localhost:8080/documents/' + originalDocument.id,
-        newDocument,
-        { headers: headers }
-      )
-      .subscribe((response: Response) => {
-        this.documents[pos] = newDocument;
-        this.sortAndSend();
-      });
-  }
+   const headers = new HttpHeaders({'Content-Type': 'application/json'});
 
-  deleteDocument(document: Document) {
-    if (!document) {
-      return;
-    }
+   // update database
+   this.http.put('http://localhost:8080/documents/' + originalDocument.id,
+     newDocument, { headers: headers })
+     .subscribe(
+       (response: Response) => {
+         this.documents[pos] = newDocument;
+         this.sortAndSend();
+       }
+     );
+ }
 
-    const pos = this.documents.findIndex((d) => d.id === document.id);
+ deleteDocument(document: Document) {
 
-    if (pos < 0) {
-      return;
-    }
+   if (!document) {
+     return;
+   }
 
-    // delete from database
-    this.http
-      .delete('http://localhost:8080/documents/' + document.id)
-      .subscribe((response: Response) => {
-        this.documents.splice(pos, 1);
-        this.sortAndSend();
-      });
-  }
+   const pos = this.documents.findIndex(d => d.id === document.id);
+
+   if (pos < 0) {
+     return;
+   }
+
+   // delete from database
+   this.http.delete('http://localhost:8080/documents/' + document.id)
+     .subscribe(
+       (response: Response) => {
+         this.documents.splice(pos, 1);
+         this.sortAndSend();
+       }
+     );
+ }
 }
